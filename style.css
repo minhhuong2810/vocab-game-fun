@@ -1,0 +1,417 @@
+/* Layout 3 khung */
+.logo-area {
+  width: 480px;
+  min-width: 480px;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+.logo-img {
+  margin: 0 auto;
+  width: 112px;
+  height: auto;
+  display: block;
+}
+
+.vocab-area {
+  width: 480px;
+  min-width: 436px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  z-index: 10;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(to bottom, #1b005b, #2d006d);
+  color: white;
+  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+.vocab-card {
+  width: 436px;
+  min-height: 320px;
+  height: auto;
+  background: #ffffff;
+  color: green;
+  border-radius: 20px;
+  padding: 10px 11px;
+  margin: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  border: 1px solid #000000;
+  overflow: hidden;
+  position: relative;
+  top: 280px;
+}
+.card-header {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  align-items: center;
+  padding-right: 8px;
+}
+.icon-button {
+  background: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  font-size: 18px;
+  color: black;
+  cursor: pointer;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.card-content textarea {
+  width: 400px;
+  min-height: 40px;
+  height: auto;
+  font-size: 18px;
+  border-radius: 8px;
+  border: none;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  outline: none;
+  color: #222;
+  background: transparent;
+  transition: border 0.2s;
+  resize: none;
+  overflow: hidden;
+  line-height: 1.4;
+}
+.card-content textarea:focus {
+  border: none;
+}
+
+.card-content textarea::placeholder {
+  font-family: Arial, sans-serif;
+  color: #d9d9d9;
+  text-transform: none;
+  font-size: 16px;
+}
+
+.card-content #word-input::placeholder {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  color: #d9d9d9;
+  text-align: center;
+  opacity: 1;
+}
+
+.card-content #word-input {
+  font-family: Arial, sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  color: green;
+  text-align: center;
+}
+
+.card-content #meaning-input {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  color: green;
+  text-align: center;
+  text-transform: none;
+}
+
+.card-content h1 {
+  color: #2ecc71;
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+}
+.card-content p {
+  font-size: 16px;
+  margin: 0;
+}
+#play-count {
+  font-style: italic;
+}
+
+/* Styling for collected letters display */
+.collected-placeholder {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  color: #999;
+}
+
+#collected-letters:not(:empty) {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  color: green;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+#collected-display {
+  max-width: 400px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Vocab visibility toggle */
+.vocab-hidden {
+  filter: blur(5px);
+  user-select: none;
+  pointer-events: none;
+}
+
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.game-area {
+  flex: 1;
+  position: relative;
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Sound control button positioned at top-left corner of canvas */
+.game-sound-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: rgba(34, 197, 94, 0.8); /* Green background for ON state */
+  border: 2px solid rgba(34, 197, 94, 1); /* Solid green border */
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* OFF state styling */
+.game-sound-btn.sound-off {
+  background: rgba(239, 68, 68, 0.8); /* Red background for OFF state */
+  border-color: rgba(239, 68, 68, 1); /* Red border for OFF state */
+}
+
+.game-sound-btn:hover {
+  background: rgba(34, 197, 94, 1); /* Darker green on hover */
+  border-color: rgba(22, 163, 74, 1); /* Darker green border on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* OFF state hover */
+.game-sound-btn.sound-off:hover {
+  background: rgba(239, 68, 68, 1); /* Darker red on hover */
+  border-color: rgba(220, 38, 38, 1); /* Darker red border on hover */
+}
+
+.game-sound-btn:active {
+  transform: translateY(0);
+}
+
+.game-sound-btn img {
+  display: block;
+  filter: brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
+  /* Green color filter for icon - matches button theme */
+}
+
+canvas {
+  width: 100%;
+  height: 100dvh;
+  min-height: 100vh;
+  display: block;
+  background: linear-gradient(to bottom, #1b005b, #2d006d);
+}
+
+/* Spelling Error Popup Overlay Styles - Matching Congratulation Style */
+.spelling-overlay {
+  position: fixed;
+  top: 0;
+  left: 480px; /* Start after vocab area */
+  width: calc(100% - 480px); /* Cover only canvas area */
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3); /* Semi-transparent background for better visibility */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  pointer-events: auto; /* Allow click on popup */
+}
+
+.spelling-popup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1); /* Slight white background */
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px); /* Modern glass effect */
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  max-width: 90%;
+  max-height: 90%;
+  animation: popupFadeIn 0.5s ease-out;
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes popupSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.popup-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.popup-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.popup-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 20px;
+  max-width: 400px;
+}
+
+.popup-title {
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  margin: 0 0 15px 0;
+}
+
+.popup-message {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: white;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+}
+
+.suggestions-container {
+  margin: 15px 0;
+}
+
+.suggestion-item {
+  display: inline-block;
+  background: #f0f0f0;
+  color: #333;
+  padding: 5px 10px;
+  margin: 3px;
+  border-radius: 15px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+  background: #e0e0e0;
+}
+
+.close-btn {
+  background: #4DC591;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 20px;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 10px;
+  white-space: nowrap;
+}
+
+.close-btn:hover {
+  background: #45b082;
+}
+
+/* Congratulations Popup Overlay Styles - Similar to spelling error popup */
+.congrats-overlay {
+  position: fixed;
+  top: 0;
+  left: 480px; /* Start after vocab area */
+  width: calc(100% - 480px); /* Cover only canvas area */
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.congrats-popup {
+  position: relative;
+  width: 600px;
+  height: 338px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Override positioning for congratulations popup - button at bottom */
+.congrats-popup .popup-content {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 2;
+}

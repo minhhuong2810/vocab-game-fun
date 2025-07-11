@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vocab Fun</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="congrats_overlay.css" />
+</head>
+<body>
+  <div class="logo-area">
+    <img src="logo.png" alt="Vocab Fun Logo" class="logo-img" />
+  </div>
+  <div class="vocab-area">
+    <div class="vocab-card" id="vocabCard">
+    <div class="card-header">
+      <button class="icon-button" onclick="nextWord()" id="nextBtn" title="Tiếp">
+        <img src="vocab_card_header_icon_navigate_next.svg" alt="Next" width="24" height="24" />
+      </button>
+      <button class="icon-button" onclick="startOrPauseGame()" id="playPauseBtn" title="Chơi / Dừng">
+        <img id="playPauseIcon" src="vocab_card_header_icon_play.svg" alt="Play" width="24" height="24" />
+      </button>
+      <button class="icon-button" onclick="toggleVocabVisibility()" id="eyeBtn" title="Hiện / Ẩn từ vựng">
+        <img id="eyeIcon" src="Eye.svg" alt="Show" width="24" height="24" />
+      </button>
+      <button class="icon-button" onclick="pronounceWord()" id="microBtn" title="Phát âm từ vựng">
+        <img id="microIcon" src="micro_off.svg" alt="Microphone" width="24" height="24" />
+      </button>
+      <button class="icon-button" onclick="clearInputs()" title="Xóa">
+        <img src="vocab_card_header_icon_delete.svg" alt="Delete" width="24" height="24" />
+      </button>
+    </div>
+    <div class="card-content">
+      <textarea id="word-input" placeholder="Nhập từ vựng" spellcheck="true"></textarea>
+      <textarea id="meaning-input" placeholder="Nhập nghĩa của từ" spellcheck="true"></textarea>
+      <p id="collected-display"><span id="collected-letters" class="collected-placeholder">Chữ cái đã bắn trúng</span></p>
+      <p id="play-count"><em>0 lượt luyện tập</em></p>
+    </div>
+  </div>
+  </div>
+  <div class="game-area">
+    <!-- Sound Control Button - Positioned at top-left corner of canvas -->
+    <button class="game-sound-btn sound-off" onclick="toggleAudio()" id="audioBtn" title="Bật / Tắt âm thanh">
+      <img id="audioIcon" src="game_sound_off.svg" alt="Sound Off" width="32" height="32" />
+    </button>
+    <canvas id="gameCanvas"></canvas>
+  </div>
+  <!-- Spelling Error Popup Overlay -->
+  <div id="spellingErrorOverlay" class="spelling-overlay" style="display: none;">
+    <div class="spelling-popup">
+      <div class="popup-content">
+        <h3 class="popup-title">Kiểm tra chính tả</h3>
+        <p id="errorMessage" class="popup-message"></p>
+        <div id="suggestionsContainer" class="suggestions-container"></div>
+        <button id="closePopupBtn" class="close-btn">Biết òi, Tớ sửa luôn đây!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Congratulations Popup Overlay -->
+  <div id="congratsOverlay" class="congrats-overlay" style="display: none;">
+    <div class="congrats-popup">
+      <div class="popup-background">
+        <img id="congratsPopupImage" src="" alt="Congratulations Popup" class="popup-image" />
+      </div>
+      <div class="popup-content">
+        <button id="closeCongratsPopupBtn" class="close-btn">Tuyệt vời! Tiếp tục nào!</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="background_loader.js"></script>
+  <script src="balloon_loader.js"></script>
+  <script src="spaceship_loader.js"></script>
+  <script src="word_hunter_manager.js"></script>
+  <script src="word_hearo_manager.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

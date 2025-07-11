@@ -1,0 +1,13 @@
+<svg width="41" height="47" viewBox="0 0 41 47" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="19.9716" cy="19.9896" rx="19.9716" ry="19.9896" transform="matrix(0.999994 -0.0033037 -0.00317911 0.999995 0.126953 0.131836)" fill="url(#paint0_radial_102_1994)"/>
+<rect width="19.9716" height="2.10416" rx="1.05208" transform="matrix(0.999994 -0.00330371 -0.00317913 0.999995 9.99561 36.9221)" fill="white"/>
+<rect width="15.7671" height="2.10416" rx="1.05208" transform="matrix(0.999994 -0.00330365 -0.00317905 0.999995 12.0913 39.019)" fill="#ECE9E9"/>
+<ellipse cx="2.36507" cy="2.36718" rx="2.36507" ry="2.36718" transform="matrix(0.999994 -0.00330398 -0.00317939 0.999995 17.3384 41.6318)" fill="#ECEBEB"/>
+<rect width="12.0881" height="2.10416" rx="1.05208" transform="matrix(0.999994 -0.00330377 -0.00317918 0.999995 13.6611 41.1182)" fill="white"/>
+<defs>
+<radialGradient id="paint0_radial_102_1994" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(13.9276 15.5182) rotate(69.6635) scale(17.3913 17.3795)">
+<stop stop-color="#FFE178"/>
+<stop offset="1" stop-color="#998748"/>
+</radialGradient>
+</defs>
+</svg>
