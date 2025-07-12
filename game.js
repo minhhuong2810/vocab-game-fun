@@ -225,7 +225,14 @@ class AudioManager {
     
     // Handle loading errors
     audio.addEventListener('error', (e) => {
-      console.log(`Failed to load sound ${name}:`, e);
+      console.log(`Failed to load sound ${name} from ${src}:`, e.target.error);
+      // Don't add to sounds object if failed to load
+      return;
+    });
+    
+    // Handle successful loading
+    audio.addEventListener('canplaythrough', () => {
+      console.log(`Successfully loaded sound: ${name}`);
     });
     
     this.sounds[name] = audio;
@@ -250,7 +257,13 @@ class AudioManager {
 
   // Play a sound effect
   playSound(name) {
-    if (this.isMuted || !this.sounds[name]) return;
+    if (this.isMuted) return;
+    
+    // Check if sound exists
+    if (!this.sounds[name]) {
+      console.log(`Sound '${name}' not available (file may not exist)`);
+      return;
+    }
     
     // If audio is not enabled, add to pending actions
     if (!audioContextManager.isAudioEnabled) {
@@ -267,7 +280,7 @@ class AudioManager {
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(err => {
-          console.log('Audio playback failed:', err);
+          console.log(`Audio playback failed for '${name}':`, err);
           // Try to show audio enable overlay if not already shown
           if (!audioContextManager.isAudioEnabled) {
             audioContextManager.showAudioEnableOverlay();
@@ -275,7 +288,7 @@ class AudioManager {
         });
       }
     } catch (error) {
-      console.log('Audio setup failed:', error);
+      console.log(`Audio setup failed for '${name}':`, error);
     }
   }
 
@@ -338,14 +351,106 @@ class AudioManager {
     }
     return this.isMuted;
   }
+
+  // Create synthetic sounds using Web Audio API (fallback for missing files)
+  createSyntheticSound(name, type = 'beep') {
+    if (!window.AudioContext && !window.webkitAudioContext) {
+      console.log('Web Audio API not supported');
+      return;
+    }
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    const createBeep = (frequency = 800, duration = 0.1, volume = 0.3) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = frequency;
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration);
+    };
+
+    // Create synthetic sound based on type
+    const syntheticAudio = {
+      play: () => {
+        if (this.isMuted) return;
+        
+        switch (type) {
+          case 'laser':
+            createBeep(1000, 0.1, 0.2);
+            break;
+          case 'explosion':
+            createBeep(200, 0.3, 0.4);
+            setTimeout(() => createBeep(150, 0.2, 0.3), 100);
+            break;
+          case 'correct':
+            createBeep(523, 0.2, 0.3); // C note
+            setTimeout(() => createBeep(659, 0.2, 0.3), 200); // E note
+            break;
+          case 'wrong':
+            createBeep(200, 0.5, 0.3);
+            break;
+          default:
+            createBeep(440, 0.2, 0.3);
+        }
+      },
+      cloneNode: function() { return this; }
+    };
+
+    this.sounds[name] = syntheticAudio;
+    console.log(`Created synthetic sound: ${name} (${type})`);
+  }
+
+  // Initialize fallback sounds if files are not available
+  initializeFallbackSounds() {
+    // Check if essential sounds are loaded, if not create synthetic ones
+    setTimeout(() => {
+      if (!this.sounds['explosion']) {
+        this.createSyntheticSound('explosion', 'explosion');
+      }
+      if (!this.sounds['laser']) {
+        this.createSyntheticSound('laser', 'laser');
+      }
+      if (!this.sounds['wordHunterCorrect']) {
+        this.createSyntheticSound('wordHunterCorrect', 'correct');
+      }
+      if (!this.sounds['wordHunterWrong']) {
+        this.createSyntheticSound('wordHunterWrong', 'wrong');
+      }
+    }, 2000); // Wait 2 seconds for file loading attempts
+  }
 }
 
 // Initialize audio manager
 const audioManager = new AudioManager();
 
-// Load sound files
-audioManager.loadSound('laser', 'sound/laser.ogg');
-audioManager.loadSound('explosion', 'sound/explosion.wav');
+// Load sound files - Using fallback approach
+// Try to load local files first, with fallbacks for missing files
+try {
+  audioManager.loadSound('explosion', 'sound/explosion.wav');
+  audioManager.loadSound('wordHunterCorrect', 'sound/word_hunter_correct.mp3');
+  audioManager.loadSound('wordHunterWrong', 'sound/word_hunter_wrong.mp3');
+  audioManager.loadSound('wordHunterMusic', 'sound/word_hunter_music.mp3');
+  audioManager.loadSound('wordShooterMusic', 'sound/word_shooter_music.wav');
+  
+  // Initialize fallback sounds for missing files
+  audioManager.initializeFallbackSounds();
+} catch (error) {
+  console.log('Audio files not found, using synthetic sounds only');
+  audioManager.createSyntheticSound('explosion', 'explosion');
+  audioManager.createSyntheticSound('laser', 'laser');
+  audioManager.createSyntheticSound('wordHunterCorrect', 'correct');
+  audioManager.createSyntheticSound('wordHunterWrong', 'wrong');
+}
 
 // Background music management
 function updateBackgroundMusic() {
@@ -629,7 +734,7 @@ function drawGameName() {
   ctx.restore();
 }
 
-function update() {
+function update(deltaTime = 16.67) { // Default to ~60fps if no deltaTime passed
   if (keys["ArrowLeft"] && spaceship.x > 0) spaceship.x -= spaceship.speed;
   if (keys["ArrowRight"] && spaceship.x < canvas.width - spaceship.width) spaceship.x += spaceship.speed;
   if (keys["ArrowUp"] && spaceship.y > 0) spaceship.y -= spaceship.speed;
@@ -639,7 +744,13 @@ function update() {
     balloons.push(createBalloon());
   }
 
-  balloons.forEach(balloon => (balloon.y += balloon.speed));
+  // Delta time standardized balloon movement - reasonable falling speed
+  const balloonSpeedMultiplier = deltaTime / 16.67; // Normalize to 60fps baseline
+  balloons.forEach(balloon => {
+    const standardizedSpeed = balloon.speed * balloonSpeedMultiplier; // Keep original speed scale
+    balloon.y += standardizedSpeed;
+  });
+  
   bullets.forEach(bullet => (bullet.y -= 8));
 
   bullets = bullets.filter(b => b.y > 0);
@@ -776,7 +887,7 @@ function gameLoop() {
     drawSpaceship();
     drawBalloons();
     drawBullets();
-    update();
+    update(deltaTime); // Pass deltaTime to update function
     checkCollision();
   } else if (currentGameType === GAME_TYPES.WORD_HUNTER) {
     // TODO: Draw Word Hunter elements
@@ -930,7 +1041,7 @@ document.addEventListener("keydown", e => {
   ) {
     e.preventDefault();
     bullets.push({ x: spaceship.x + spaceship.width / 2 - 2, y: spaceship.y });
-    // Play laser sound effect
+    // Play laser sound effect (using synthetic sound if file not available)
     audioManager.playSound('laser');
   }
 });
@@ -1617,5 +1728,66 @@ function clearInputs() {
   
   console.log("Inputs cleared and game reset");
 }
+
+// ========================================
+// RESPONSIVE HELPER FUNCTIONS - NOT USED YET
+// ========================================
+
+/**
+ * Get current screen type based on window width
+ * NOT CALLED YET - ready for implementation
+ * @returns {string} Screen type: 'mobile-small', 'mobile', 'tablet', 'desktop'
+ */
+function getScreenType() {
+  const width = window.innerWidth;
+  if (width <= 480) return 'mobile-small';
+  if (width <= 768) return 'mobile';
+  if (width <= 1024) return 'tablet';
+  return 'desktop';
+}
+
+/**
+ * Check if current screen is mobile (tablet or smaller)
+ * NOT CALLED YET - ready for implementation
+ * @returns {boolean} True if mobile/tablet screen
+ */
+function isMobileScreen() {
+  return window.innerWidth <= 1024;
+}
+
+/**
+ * Check if screen is in landscape orientation
+ * NOT CALLED YET - ready for implementation
+ * @returns {boolean} True if landscape orientation
+ */
+function isLandscapeOrientation() {
+  return window.innerHeight <= 600 && 
+         (screen.orientation?.angle === 90 || screen.orientation?.angle === 270 || 
+          window.innerWidth > window.innerHeight);
+}
+
+/**
+ * Get responsive canvas dimensions
+ * NOT CALLED YET - ready for implementation
+ * @returns {object} {width, height} Canvas dimensions for current screen
+ */
+function getResponsiveCanvasDimensions() {
+  const isMobile = isMobileScreen();
+  
+  if (isMobile) {
+    return {
+      width: window.innerWidth,
+      height: Math.min(window.innerHeight * 0.6, 500)
+    };
+  } else {
+    return {
+      width: window.innerWidth - 436 - 40,
+      height: window.innerHeight
+    };
+  }
+}
+
+// These functions are defined but NOT EXECUTED
+// Current canvas resizing logic remains unchanged
 
 

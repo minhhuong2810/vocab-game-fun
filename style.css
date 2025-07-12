@@ -1,3 +1,12 @@
+/* CSS Variables for Responsive Design */
+:root {
+  --logo-area-width: 480px;
+  --vocab-area-width: 480px;
+  --vocab-card-width: 436px;
+  --vocab-card-top-offset: 280px;
+  --canvas-width-offset: 476px; /* 436 + 40 */
+}
+
 /* Layout 3 khung */
 .logo-area {
   width: 480px;
@@ -414,4 +423,51 @@ canvas {
   padding: 0 20px;
   box-sizing: border-box;
   z-index: 2;
+}
+
+/* Responsive utility classes - NOT USED YET, ready for implementation */
+.hidden-mobile { 
+  display: block; 
+}
+
+.hidden-desktop { 
+  display: none; 
+}
+
+.flex-column-mobile { 
+  flex-direction: row; 
+}
+
+.flex-row-mobile { 
+  flex-direction: row; 
+}
+
+/* These classes will be activated in media queries later */
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS - EMPTY FOR NOW
+   ======================================== */
+
+/* Tablet and smaller screens */
+@media screen and (max-width: 1024px) {
+  /* Tablet responsive styles will go here */
+  /* This media query is ready but empty - no visual impact */
+}
+
+/* Mobile landscape and smaller */
+@media screen and (max-width: 768px) {
+  /* Mobile landscape responsive styles will go here */
+  /* This media query is ready but empty - no visual impact */
+}
+
+/* Mobile portrait */
+@media screen and (max-width: 480px) {
+  /* Mobile portrait responsive styles will go here */
+  /* This media query is ready but empty - no visual impact */
+}
+
+/* Landscape orientation adjustments */
+@media screen and (max-height: 600px) and (orientation: landscape) {
+  /* Landscape mode responsive styles will go here */
+  /* This media query is ready but empty - no visual impact */
 }
