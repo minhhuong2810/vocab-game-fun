@@ -512,8 +512,10 @@ tryInitializeManagers();
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 function resizeCanvas() {
-  canvas.width = window.innerWidth - 436 - 40;
-  canvas.height = window.innerHeight;
+  // Use existing responsive logic
+  const dimensions = getResponsiveCanvasDimensions();
+  canvas.width = dimensions.width;
+  canvas.height = dimensions.height;
 }
 resizeCanvas();
 ctx.font = "bold 20px Arial";
@@ -734,7 +736,8 @@ function drawGameName() {
   ctx.restore();
 }
 
-function update(deltaTime = 16.67) { // Default to ~60fps if no deltaTime passed
+function update(deltaTime = 16.67) // Default to ~60fps if no deltaTime passed
+{
   if (keys["ArrowLeft"] && spaceship.x > 0) spaceship.x -= spaceship.speed;
   if (keys["ArrowRight"] && spaceship.x < canvas.width - spaceship.width) spaceship.x += spaceship.speed;
   if (keys["ArrowUp"] && spaceship.y > 0) spaceship.y -= spaceship.speed;
@@ -1747,12 +1750,30 @@ function getScreenType() {
 }
 
 /**
- * Check if current screen is mobile (tablet or smaller)
- * NOT CALLED YET - ready for implementation
- * @returns {boolean} True if mobile/tablet screen
+ * Check if current screen is mobile (740px or smaller)
+ * ACTIVATED - matches CSS breakpoint
+ * @returns {boolean} True if mobile screen
  */
 function isMobileScreen() {
-  return window.innerWidth <= 1024;
+  return window.innerWidth <= 740;
+}
+
+/**
+ * Check if current screen is tablet (741-1023px)
+ * NEW - added for proper breakpoint logic
+ * @returns {boolean} True if tablet screen
+ */
+function isTabletScreen() {
+  return window.innerWidth >= 741 && window.innerWidth <= 1023;
+}
+
+/**
+ * Check if current screen is desktop (1024px or larger)
+ * NEW - added for proper breakpoint logic  
+ * @returns {boolean} True if desktop screen
+ */
+function isDesktopScreen() {
+  return window.innerWidth >= 1024;
 }
 
 /**
@@ -1768,18 +1789,31 @@ function isLandscapeOrientation() {
 
 /**
  * Get responsive canvas dimensions
- * NOT CALLED YET - ready for implementation
+ * ACTIVATED - now used by resizeCanvas()
+ * Updated with proper mobile/tablet + desktop logic
  * @returns {object} {width, height} Canvas dimensions for current screen
  */
 function getResponsiveCanvasDimensions() {
   const isMobile = isMobileScreen();
+  const isTablet = isTabletScreen();
+  const isDesktop = isDesktopScreen();
   
-  if (isMobile) {
+  if (isMobile || isTablet) {
+    // Mobile + Tablet: Column layout - use game-area width with fallback
+    const gameArea = document.querySelector('.game-area');
+    let canvasWidth = window.innerWidth; // Default fallback
+    
+    // Try to get actual game-area width with comprehensive fallback handling
+    if (gameArea && gameArea.clientWidth && gameArea.clientWidth > 0) {
+      canvasWidth = gameArea.clientWidth;
+    }
+    
     return {
-      width: window.innerWidth,
+      width: canvasWidth,
       height: Math.min(window.innerHeight * 0.6, 500)
     };
   } else {
+    // Desktop: Original logic - preserve existing behavior
     return {
       width: window.innerWidth - 436 - 40,
       height: window.innerHeight
@@ -1787,7 +1821,12 @@ function getResponsiveCanvasDimensions() {
   }
 }
 
-// These functions are defined but NOT EXECUTED
+// RESPONSIVE FUNCTIONS - NOW ACTIVATED
+// - isMobileScreen(): Check if screen ≤740px (Mobile)
+// - isTabletScreen(): Check if screen 741-1023px (Tablet)  
+// - isDesktopScreen(): Check if screen ≥1024px (Desktop)
+// - getResponsiveCanvasDimensions(): Get canvas size based on device type
+// - resizeCanvas(): Now uses responsive logic with proper breakpoints
 // Current canvas resizing logic remains unchanged
 
 

@@ -1,10 +1,33 @@
 /* CSS Variables for Responsive Design */
 :root {
+  /* Original variables - UNCHANGED */
   --logo-area-width: 480px;
   --vocab-area-width: 480px;
   --vocab-card-width: 436px;
   --vocab-card-top-offset: 280px;
   --canvas-width-offset: 476px; /* 436 + 40 */
+  
+  /* Responsive breakpoint variables - UPDATED */
+  --mobile-max: 1023px; /* Extended to include tablet */
+  --tablet-min: 741px; /* Keep for reference but not used */
+  --tablet-max: 1023px;
+  --desktop-min: 1024px;
+  
+  /* Mobile responsive variables - NOT USED YET */
+  --vocab-width-mobile: 100vw;
+  --canvas-height-mobile: 60vh;
+  
+  /* Tablet responsive variables - NOT USED YET */
+  --vocab-width-tablet: 30vw;
+  --canvas-width-tablet: 70vw;
+  
+  /* Desktop responsive variables - NOT USED YET */
+  --vocab-width-desktop: clamp(480px, 25vw, 768px);
+  --canvas-width-desktop: calc(100vw - var(--vocab-width-desktop));
+  
+  /* Dynamic popup positioning variables - NOT USED YET */
+  --popup-left: var(--vocab-area-width);
+  --popup-width: calc(100% - var(--vocab-area-width));
 }
 
 /* Layout 3 khung */
@@ -445,13 +468,111 @@ canvas {
 /* These classes will be activated in media queries later */
 
 /* ========================================
-   RESPONSIVE BREAKPOINTS - EMPTY FOR NOW
+   RESPONSIVE BREAKPOINTS - MOBILE IMPLEMENTATION
    ======================================== */
 
-/* Tablet and smaller screens */
-@media screen and (max-width: 1024px) {
-  /* Tablet responsive styles will go here */
-  /* This media query is ready but empty - no visual impact */
+/* Mobile + Tablet screens (≤1023px) - Column Layout */
+@media screen and (max-width: 1023px) {
+  /* Mobile + Tablet: Column layout - Logo → Vocab → Game */
+  body {
+    flex-direction: column;
+    height: auto;
+    overflow-y: auto;
+  }
+  
+  /* Mobile: Logo area - compact and relative */
+  .logo-area {
+    position: relative;
+    width: 100%;
+    height: 60px;
+    padding: 10px 0;
+    margin-bottom: 10px;
+  }
+  
+  /* Mobile: Vocab area - full width responsive */
+  .vocab-area {
+    width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+  }
+  
+  /* Mobile: Vocab card - responsive width */
+  .vocab-card {
+    width: calc(100% - 30px);
+    max-width: 400px;
+    position: static;
+    top: 0;
+    margin: 0 auto;
+  }
+  
+  /* Mobile: Game area - controlled by JavaScript */
+  .game-area {
+    height: auto;
+    min-height: 400px;
+    flex: none;
+  }
+  
+  /* Mobile: Canvas - size controlled by JavaScript */
+  canvas {
+    height: auto;
+    min-height: 400px;
+  }
+  
+  /* Mobile: Touch-friendly icons */
+  .icon-button {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+  }
+  
+  /* Mobile: Dynamic popup positioning - HIGH SPECIFICITY */
+  .spelling-overlay,
+  .congrats-overlay {
+    left: 0 !important;
+    width: 100% !important;
+    top: 0;
+    height: 100%;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .spelling-popup,
+  .congrats-popup {
+    max-width: 90%;
+    margin: 0;
+    position: relative;
+    top: auto;
+    transform: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Mobile: Specific congratulations popup adjustments */
+  .congrats-popup {
+    width: auto !important;
+    height: auto !important;
+    max-width: 300px;
+    max-height: 400px;
+    flex-direction: column;
+  }
+  
+  /* Mobile: Reset congratulations popup content positioning */
+  .congrats-popup .popup-content {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: auto !important;
+    padding: 20px;
+    text-align: center;
+  }
 }
 
 /* Mobile landscape and smaller */
@@ -461,9 +582,23 @@ canvas {
 }
 
 /* Mobile portrait */
+/* Mobile portrait - Canvas width optimization */
 @media screen and (max-width: 480px) {
-  /* Mobile portrait responsive styles will go here */
-  /* This media query is ready but empty - no visual impact */
+  /* Reduce vocab area padding to optimize canvas width */
+  .vocab-area {
+    padding: 0 8px;
+  }
+  
+  /* Adjust vocab card width for reduced padding */
+  .vocab-card {
+    width: calc(100% - 16px);
+  }
+  
+  /* Ensure game area takes full available width */
+  .game-area {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 /* Landscape orientation adjustments */

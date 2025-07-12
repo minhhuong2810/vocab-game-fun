@@ -13,30 +13,30 @@
   </div>
   <div class="vocab-area">
     <div class="vocab-card" id="vocabCard">
-    <div class="card-header">
-      <button class="icon-button" onclick="nextWord()" id="nextBtn" title="Game tiếp theo">
-        <img src="vocab_card_header_icon_navigate_next.svg" alt="Next" width="24" height="24" />
-      </button>
-      <button class="icon-button" onclick="startOrPauseGame()" id="playPauseBtn" title="Chơi / Dừng">
-        <img id="playPauseIcon" src="vocab_card_header_icon_play.svg" alt="Play" width="24" height="24" />
-      </button>
-      <button class="icon-button" onclick="toggleVocabVisibility()" id="eyeBtn" title="Hiện / Ẩn từ vựng">
-        <img id="eyeIcon" src="Eye.svg" alt="Show" width="24" height="24" />
-      </button>
-      <button class="icon-button" onclick="pronounceWord()" id="microBtn" title="Phát âm từ vựng">
-        <img id="microIcon" src="micro_off.svg" alt="Microphone" width="24" height="24" />
-      </button>
-      <button class="icon-button" onclick="clearInputs()" title="Xóa">
-        <img src="vocab_card_header_icon_delete.svg" alt="Delete" width="24" height="24" />
-      </button>
+      <div class="card-content">
+        <textarea id="word-input" placeholder="Nhập từ vựng" spellcheck="true"></textarea>
+        <textarea id="meaning-input" placeholder="Nhập nghĩa của từ" spellcheck="true"></textarea>
+        <p id="collected-display"><span id="collected-letters" class="collected-placeholder">Chữ cái đã bắn trúng</span></p>
+        <p id="play-count"><em>0 lượt luyện tập</em></p>
+      </div>
+      <div class="card-header">
+        <button class="icon-button" onclick="nextWord()" id="nextBtn" title="Game tiếp theo">
+          <img src="vocab_card_header_icon_navigate_next.svg" alt="Next" width="24" height="24" />
+        </button>
+        <button class="icon-button" onclick="startOrPauseGame()" id="playPauseBtn" title="Chơi / Dừng">
+          <img id="playPauseIcon" src="vocab_card_header_icon_play.svg" alt="Play" width="24" height="24" />
+        </button>
+        <button class="icon-button" onclick="toggleVocabVisibility()" id="eyeBtn" title="Hiện / Ẩn từ vựng">
+          <img id="eyeIcon" src="Eye.svg" alt="Show" width="24" height="24" />
+        </button>
+        <button class="icon-button" onclick="pronounceWord()" id="microBtn" title="Phát âm từ vựng">
+          <img id="microIcon" src="micro_off.svg" alt="Microphone" width="24" height="24" />
+        </button>
+        <button class="icon-button" onclick="clearInputs()" title="Xóa">
+          <img src="vocab_card_header_icon_delete.svg" alt="Delete" width="24" height="24" />
+        </button>
+      </div>
     </div>
-    <div class="card-content">
-      <textarea id="word-input" placeholder="Nhập từ vựng" spellcheck="true"></textarea>
-      <textarea id="meaning-input" placeholder="Nhập nghĩa của từ" spellcheck="true"></textarea>
-      <p id="collected-display"><span id="collected-letters" class="collected-placeholder">Chữ cái đã bắn trúng</span></p>
-      <p id="play-count"><em>0 lượt luyện tập</em></p>
-    </div>
-  </div>
   </div>
   <div class="game-area">
     <!-- Sound Control Button - Positioned at top-left corner of canvas -->
