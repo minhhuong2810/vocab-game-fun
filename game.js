@@ -1,3 +1,4 @@
+/* PHỤC HỒI TOÀN BỘ game.js từ rollback_version/ver1.4_game.js */
 const BALLOON_SIZE = 48;
 
 // --- AUDIO CONTEXT MANAGER FOR AUTOPLAY POLICY ---
@@ -596,42 +597,20 @@ async function getSpellingSuggestions(word) {
 function showSpellingErrorPopup(word, suggestions) {
   const overlay = document.getElementById('spellingErrorOverlay');
   const errorMessage = document.getElementById('errorMessage');
-  const suggestionsContainer = document.getElementById('suggestionsContainer');
   const closeBtn = document.getElementById('closePopupBtn');
-  
-  // Set error message
+
+  // Set error message (always show the same message, no suggestions)
   errorMessage.textContent = `"${word}" có thể bị sai chính tả.`;
-  
-  // Clear and populate suggestions
-  suggestionsContainer.innerHTML = '';
-  if (suggestions.length > 0) {
-    suggestions.forEach(suggestion => {
-      const suggestionSpan = document.createElement('span');
-      suggestionSpan.className = 'suggestion-item';
-      suggestionSpan.textContent = suggestion;
-      suggestionSpan.onclick = () => {
-        // Apply suggestion to word input
-        const wordInput = document.getElementById("word-input");
-        wordInput.value = suggestion;
-        hideSpellingErrorPopup();
-      };
-      suggestionsContainer.appendChild(suggestionSpan);
-    });
-  } else {
-    errorMessage.textContent = `"${word}" có thể không phải là từ tiếng Anh hợp lệ.`;
-    const checkAgainSpan = document.createElement('span');
-    checkAgainSpan.className = 'suggestion-item';
-    checkAgainSpan.textContent = 'Kiểm tra lại';
-    checkAgainSpan.onclick = () => hideSpellingErrorPopup();
-    suggestionsContainer.appendChild(checkAgainSpan);
-  }
-  
+
   // Show overlay
   overlay.style.display = 'flex';
-  
+  // Show global popup background
+  const bg = document.querySelector('.popup-background');
+  if (bg) bg.classList.add('active');
+
   // Set up close button
   closeBtn.onclick = hideSpellingErrorPopup;
-  
+
   // Close on overlay click (outside popup)
   overlay.onclick = (e) => {
     if (e.target === overlay) {
@@ -643,6 +622,9 @@ function showSpellingErrorPopup(word, suggestions) {
 function hideSpellingErrorPopup() {
   const overlay = document.getElementById('spellingErrorOverlay');
   overlay.style.display = 'none';
+  // Hide global popup background
+  const bg = document.querySelector('.popup-background');
+  if (bg) bg.classList.remove('active');
 }
 
 // Update popup positions - ensuring they stay properly positioned
@@ -783,15 +765,9 @@ function checkCollision() {
         if (collected === targetWord) {
           playCount++;
           document.getElementById("play-count").innerText = `${playCount} lượt luyện tập`;
-          
-          // Automatically show vocab word and meaning when word is completed
-          if (!isVocabVisible) {
-            toggleVocabVisibility();
-          }
-          
+          // Không tự động show vocab card khi hoàn thành game shooter
           showCongratsOverlay();
           resetGame();
-          
           // Pause the game after completing the word
           isGameRunning = false;
           gameInitialized = false; // Reset initialization flag when game completes
@@ -1369,21 +1345,25 @@ function toggleVocabVisibility() {
   const eyeIcon = document.getElementById("eyeIcon");
   const wordInput = document.getElementById("word-input");
   const meaningInput = document.getElementById("meaning-input");
-  
+  const collectedDisplay = document.getElementById("collected-display");
+  const playCount = document.getElementById("play-count");
   isVocabVisible = !isVocabVisible;
-  
   if (isVocabVisible) {
-    // Show vocab
+    // Show full vocab card
     eyeIcon.src = "Eye.svg";
     eyeIcon.alt = "Show";
-    wordInput.classList.remove("vocab-hidden");
-    meaningInput.classList.remove("vocab-hidden");
+    wordInput.style.display = "block";
+    meaningInput.style.display = "block";
+    collectedDisplay.style.display = "block";
+    playCount.style.display = "block";
   } else {
-    // Hide vocab
+    // Hide vocab card content (collapse)
     eyeIcon.src = "Eye_off.svg";
     eyeIcon.alt = "Hide";
-    wordInput.classList.add("vocab-hidden");
-    meaningInput.classList.add("vocab-hidden");
+    wordInput.style.display = "none";
+    meaningInput.style.display = "none";
+    collectedDisplay.style.display = "none";
+    playCount.style.display = "none";
   }
 }
 
@@ -1492,6 +1472,9 @@ function showCongratsOverlay() {
   
   // Show overlay
   overlay.style.display = 'flex';
+  // Show global popup background
+  const bg = document.querySelector('.popup-background');
+  if (bg) bg.classList.add('active');
 }
 
 function hideCongratsOverlay() {
@@ -1499,6 +1482,9 @@ function hideCongratsOverlay() {
   if (overlay) {
     overlay.style.display = 'none';
   }
+  // Hide global popup background
+  const bg = document.querySelector('.popup-background');
+  if (bg) bg.classList.remove('active');
 }
 
 // --- START ANIMATION LOOP ON PAGE LOAD ---
@@ -1599,45 +1585,42 @@ function updateVocabVisibilityForHearo() {
   const eyeIcon = document.getElementById("eyeIcon");
   const wordInput = document.getElementById("word-input");
   const meaningInput = document.getElementById("meaning-input");
+  const collectedDisplay = document.getElementById("collected-display");
+  const playCountDisplay = document.getElementById("play-count");
   
   if (currentGameType === GAME_TYPES.WORD_HEARO && isGameRunning) {
     // Word Hearo is running: hide vocab and deactivate eye button
     eyeBtn.disabled = true;
     eyeBtn.style.opacity = "0.5";
     eyeBtn.style.cursor = "not-allowed";
-    
-    // Hide vocab regardless of current state
     eyeIcon.src = "Eye_off.svg";
     eyeIcon.alt = "Hide";
-    wordInput.classList.add("vocab-hidden");
-    meaningInput.classList.add("vocab-hidden");
+    wordInput.style.display = "none";
+    meaningInput.style.display = "none";
+    collectedDisplay.style.display = "none";
+    playCountDisplay.style.display = "none";
+    isVocabVisible = false;
   } else {
-    // Word Hearo is not running or different game: reactivate eye button
+    // Word Hearo is not running hoặc game khác: reactivate eye button
     eyeBtn.disabled = false;
     eyeBtn.style.opacity = "1";
     eyeBtn.style.cursor = "pointer";
-    
-    // Restore vocab visibility state
     if (isVocabVisible) {
       eyeIcon.src = "Eye.svg";
       eyeIcon.alt = "Show";
-      wordInput.classList.remove("vocab-hidden");
-      meaningInput.classList.remove("vocab-hidden");
+      wordInput.style.display = "block";
+      meaningInput.style.display = "block";
+      collectedDisplay.style.display = "block";
+      playCountDisplay.style.display = "block";
     } else {
       eyeIcon.src = "Eye_off.svg";
       eyeIcon.alt = "Hide";
-      wordInput.classList.add("vocab-hidden");
-      meaningInput.classList.add("vocab-hidden");
+      wordInput.style.display = "none";
+      meaningInput.style.display = "none";
+      collectedDisplay.style.display = "none";
+      playCountDisplay.style.display = "none";
     }
-    
-    // Show vocab when Word Hearo ends
-    if (currentGameType === GAME_TYPES.WORD_HEARO && !isGameRunning) {
-      isVocabVisible = true;
-      eyeIcon.src = "Eye.svg";
-      eyeIcon.alt = "Show";
-      wordInput.classList.remove("vocab-hidden");
-      meaningInput.classList.remove("vocab-hidden");
-    }
+    // Không ép vocab card luôn hiển thị khi game kết thúc, giữ nguyên trạng thái hiện tại
   }
 }
 
@@ -1651,30 +1634,29 @@ function clearInputs() {
   const wordInput = document.getElementById("word-input");
   const meaningInput = document.getElementById("meaning-input");
   
-  // Special handling for Word Hearo - show and active vocab inputs FIRST
-  if (isGameRunning && currentGameType === GAME_TYPES.WORD_HEARO) {
-    console.log("Word Hearo clearInputs - inside condition");
-    console.log("Word Hearo clearInputs - checking vocab visibility:", isVocabVisible);
-    console.log("wordInput has vocab-hidden class:", wordInput.classList.contains("vocab-hidden"));
-    console.log("meaningInput has vocab-hidden class:", meaningInput.classList.contains("vocab-hidden"));
-    
-    // Ensure vocab inputs are visible and active
-    if (!isVocabVisible) {
-      console.log("Word Hearo clearInputs - making vocab visible");
-      isVocabVisible = true;
-      const eyeIcon = document.getElementById("eyeIcon");
-      eyeIcon.src = "Eye.svg";
-      eyeIcon.alt = "Show";
-      wordInput.classList.remove("vocab-hidden");
-      meaningInput.classList.remove("vocab-hidden");
-      console.log("Word Hearo clearInputs - vocab inputs should now be visible");
-      console.log("After removal - wordInput has vocab-hidden class:", wordInput.classList.contains("vocab-hidden"));
-      console.log("After removal - meaningInput has vocab-hidden class:", meaningInput.classList.contains("vocab-hidden"));
-    } else {
-      console.log("Word Hearo clearInputs - vocab already visible, no need to change");
-    }
-  } else {
-    console.log("Word Hearo clearInputs - condition not met, skipping vocab visibility logic");
+  // Nếu vocab card đang minimize (eye off), thì show lại toàn bộ vocab card
+  const eyeIcon = document.getElementById("eyeIcon");
+  const collectedDisplay = document.getElementById("collected-display");
+  const playCountDisplay = document.getElementById("play-count");
+  // Nếu đang chơi Word Hearo, luôn chuyển eye về eye (hiện vocab card)
+  if (currentGameType === GAME_TYPES.WORD_HEARO && isGameRunning) {
+    isVocabVisible = true;
+    eyeIcon.src = "Eye.svg";
+    eyeIcon.alt = "Show";
+    wordInput.style.display = "block";
+    meaningInput.style.display = "block";
+    collectedDisplay.style.display = "block";
+    playCountDisplay.style.display = "block";
+    // Remove any hidden class for full compatibility
+    wordInput.classList.remove("vocab-hidden");
+    meaningInput.classList.remove("vocab-hidden");
+    collectedDisplay.classList.remove("vocab-hidden");
+    playCountDisplay.classList.remove("vocab-hidden");
+    // Enable eyeBtn và cập nhật style
+    const eyeBtn = document.getElementById("eyeBtn");
+    eyeBtn.disabled = false;
+    eyeBtn.style.opacity = "1";
+    eyeBtn.style.cursor = "pointer";
   }
   
   // Clear input values
@@ -1717,17 +1699,7 @@ function clearInputs() {
   // Update input fields state to ensure they are enabled
   updateInputFieldsState();
   
-  // BACKUP: Force show vocab inputs for Word Hearo after clearing (regardless of previous state)
-  if (currentGameType === GAME_TYPES.WORD_HEARO) {
-    console.log("BACKUP: Forcing Word Hearo vocab inputs to be visible");
-    isVocabVisible = true;
-    const eyeIcon = document.getElementById("eyeIcon");
-    eyeIcon.src = "Eye.svg";
-    eyeIcon.alt = "Show";
-    wordInput.classList.remove("vocab-hidden");
-    meaningInput.classList.remove("vocab-hidden");
-    console.log("BACKUP: Word Hearo vocab inputs forced visible");
-  }
+  // Không ép vocab card hiển thị khi clearInputs, chỉ xử lý đúng logic cho Word Hearo đang chơi
   
   console.log("Inputs cleared and game reset");
 }
@@ -1798,24 +1770,22 @@ function getResponsiveCanvasDimensions() {
   const isTablet = isTabletScreen();
   const isDesktop = isDesktopScreen();
   
-  if (isMobile || isTablet) {
-    // Mobile + Tablet: Column layout - use game-area width with fallback
-    const gameArea = document.querySelector('.game-area');
-    let canvasWidth = window.innerWidth; // Default fallback
-    
-    // Try to get actual game-area width with comprehensive fallback handling
-    if (gameArea && gameArea.clientWidth && gameArea.clientWidth > 0) {
-      canvasWidth = gameArea.clientWidth;
+  const gameArea = document.querySelector('.game-area');
+  let canvasWidth = 300; // fallback
+  if (gameArea) {
+    const rect = gameArea.getBoundingClientRect();
+    if (rect.width && rect.width > 0) {
+      canvasWidth = rect.width;
     }
-    
+  }
+  if (isMobile || isTablet) {
     return {
       width: canvasWidth,
       height: Math.min(window.innerHeight * 0.6, 500)
     };
   } else {
-    // Desktop: Original logic - preserve existing behavior
     return {
-      width: window.innerWidth - 436 - 40,
+      width: canvasWidth,
       height: window.innerHeight
     };
   }
